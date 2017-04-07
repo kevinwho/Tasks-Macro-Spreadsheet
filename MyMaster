@@ -1,0 +1,18 @@
+Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+
+'Create a variable to store the ActiveCell's column number
+Dim columnCheck As Integer
+
+'Set that variable to the ActiveCell's column number
+columnCheck = ActiveCell.Column
+
+'Check if that column is the Task ID Number column
+If columnCheck = 5 Then
+    ' If it is, then copy the ActiveCell
+    ActiveCell.Copy
+    ActiveCell.Interior.ColorIndex = 37
+End If
+
+
+
+End Sub
