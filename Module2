@@ -1,0 +1,11 @@
+Sub Hide()
+'
+' Hide Macro
+' Hide columns A-D, H, J, L
+'
+' Keyboard Shortcut: Option+Cmd+y
+'
+    Range("A:D,L:L,J:J,H:H").Select
+    Range("H1").Activate
+    Selection.EntireColumn.Hidden = True
+End Sub
