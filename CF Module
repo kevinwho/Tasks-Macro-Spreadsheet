@@ -1,0 +1,149 @@
+Sub CF_Rejected()
+'
+' CF_Rejected Macro
+'
+
+'
+    Columns("G:G").Select
+    Selection.FormatConditions.Add Type:=xlTextString, String:="Rejected", _
+        TextOperator:=xlContains
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = xlAutomatic
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+End Sub
+Sub CF_CriticalHigh()
+'
+' CF_CriticalHigh Macro
+'
+
+'
+    Columns("F:F").Select
+    Selection.FormatConditions.Add Type:=xlTextString, String:="Critical", _
+        TextOperator:=xlContains
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = xlAutomatic
+    End With
+    
+    Selection.FormatConditions(1).StopIfTrue = False
+    Selection.FormatConditions.Add Type:=xlTextString, String:="High", _
+        TextOperator:=xlContains
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = xlAutomatic
+    End With
+    
+    Selection.FormatConditions(1).StopIfTrue = False
+End Sub
+
+Sub HighlightFutureDue()
+'
+' HighlightFutureDue Macro
+' Highlight tasks that are due in the future (anything after 2 weeks from the current date) in green.
+'
+
+'
+    Columns("K:K").Select
+    Selection.FormatConditions.Add Type:=xlExpression, Formula1:= _
+        "=$K2-TODAY()>14"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = xlAutomatic
+    End With
+    
+    Selection.FormatConditions(1).StopIfTrue = False
+    Cells.FormatConditions.Delete
+    Range("I2:I343").Select
+    Selection.FormatConditions.Add Type:=xlExpression, Formula1:= _
+        "=$I2-TODAY()<0"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = xlAutomatic
+    End With
+    
+    Selection.FormatConditions(1).StopIfTrue = False
+    Range("I2:I343").Select
+    Selection.FormatConditions.Add Type:=xlExpression, Formula1:= _
+        "=AND($I2-TODAY()>=0, $I2-TODAY()<=14)"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = xlAutomatic
+    End With
+    
+    Selection.FormatConditions(1).StopIfTrue = False
+    Range("I2:I343").Select
+    Selection.FormatConditions.Add Type:=xlExpression, Formula1:= _
+        "=$I2-TODAY()>14"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = xlAutomatic
+    End With
+    
+    Selection.FormatConditions(1).StopIfTrue = False
+End Sub
+Sub CF_PastDue()
+'
+' CF_PastDue Macro
+'
+
+'
+    Columns("K:K").Select
+    Selection.FormatConditions.Add Type:=xlExpression, Formula1:= _
+        "=""< TODAY()"""
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = xlAutomatic
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+End Sub
+Sub CF_ShipDate()
+'
+' CF_ShipDate Macro
+'
+
+'
+    Columns("K:K").Select
+    Cells.FormatConditions.Delete
+    Columns("K:K").Select
+    Selection.FormatConditions.Add Type:=xlExpression, Formula1:= _
+        "=$K1-TODAY()>14"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = xlAutomatic
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+    Columns("K:K").Select
+    Selection.FormatConditions.Add Type:=xlExpression, Formula1:= _
+        "=AND($K1-TODAY()>=0, $K1-TODAY()<=14)"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = xlAutomatic
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+    Columns("K:K").Select
+    Selection.FormatConditions.Add Type:=xlExpression, Formula1:= _
+        "=AND(TODAY()-$K1>=1,NOT(ISBLANK($K1)))"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = xlAutomatic
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+End Sub
