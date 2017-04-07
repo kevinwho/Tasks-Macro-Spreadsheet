@@ -1,0 +1,156 @@
+
+Sub StartTasks()
+
+Dim SheetName As String
+Sheets.Add , Worksheets(Worksheets.Count)
+
+SheetName = Format(Date, "mm-dd") 'Change the format as per your requirement
+ActiveSheet.Name = SheetName
+
+End Sub
+
+
+Private Sub Workbook_Open()
+Sheets("Start page").Activate
+End Sub
+
+
+Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+
+'Create a variable to store the ActiveCell's column number
+Dim columnCheck As Integer
+
+'Set that variable to the ActiveCell's column number
+columnCheck = ActiveCell.Column
+
+'Check if that column is the Task ID Number column
+If columnCheck = 5 Then
+    ' If it is, then copy the ActiveCell
+    ActiveCell.Copy
+    ActiveCell.Interior.ColorIndex = 37
+End If
+
+End Sub
+
+
+Private Sub Workbook_NewSheet(ByVal Sh As Object)
+
+Dim tmpName As String
+tmpName = Sh.Name
+Dim dateName As String
+dateName = Format(Date, "mm-dd")
+
+
+Sheets("MyMaster").Copy Before:=Sheets(Sh.Name)
+Application.DisplayAlerts = False
+Sheets(Sh.Name).Delete
+
+On Error Resume Next
+Sheets(dateName).Delete 'Delete current date if there is already a sheet
+
+Application.DisplayAlerts = True
+Sheets("MyMaster (2)").Name = dateName
+'ActiveSheet.Name = Format(Date, "mm-dd")
+
+'----------------------
+' PASTE AND FORMAT SHEET
+'----------------------
+Sheets(dateName).Activate
+Sheets(dateName).Range("A1").Select
+
+On Error Resume Next
+ActiveSheet.PasteSpecial Format:="Text", Link:=False, DisplayAsIcon:=False
+If Err Then MsgBox "Nothing to paste!": Err.Clear
+
+' AutoFit columns
+Columns.AutoFit
+
+'Freeze pane
+Rows("2:2").Select
+ActiveWindow.FreezePanes = True
+
+' HIDE UNNESSESARY COLUMNS
+
+
+'-----------------------
+' CONDITIONAL FORMATTING
+'-----------------------
+
+'CF_CriticalHigh Macro: Format tasks that have Critical or High priority
+
+    Columns("F:F").Select
+    Selection.FormatConditions.Add Type:=xlTextString, String:="Critical", _
+        TextOperator:=xlContains
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+        With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = 3
+    End With
+
+    Selection.FormatConditions(1).StopIfTrue = False
+    Selection.FormatConditions.Add Type:=xlTextString, String:="High", _
+        TextOperator:=xlContains
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+        With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = 3
+    End With
+
+    Selection.FormatConditions(1).StopIfTrue = False
+
+
+' CF_Rejected Macro: Format tasks that have been rejected
+
+    Columns("G:G").Select
+    Selection.FormatConditions.Add Type:=xlTextString, String:="Rejected", _
+        TextOperator:=xlContains
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = 3
+    End With
+
+    Selection.FormatConditions(1).StopIfTrue = False
+
+'Modified By column: Format tasks if user was last to modify (i.e. Left a note in CMP)
+
+
+'CF_ShipDate Macro: Format tasks based on past due, current (today + 2 weeks), future (beyond 2 weeks)
+
+    Columns("K:K").Select
+    Selection.FormatConditions.Add Type:=xlExpression, Formula1:= _
+        "=$K1-TODAY()>14"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = 10
+    End With
+
+    Selection.FormatConditions(1).StopIfTrue = False
+    Columns("K:K").Select
+    Selection.FormatConditions.Add Type:=xlExpression, Formula1:= _
+        "=AND($K1-TODAY()>0, $K1-TODAY()<=14)"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = 6
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+
+    Columns("K:K").Select
+    Selection.FormatConditions.Add Type:=xlExpression, Formula1:= _
+        "=AND(TODAY()-$K1>=1,NOT(ISBLANK($K1)))"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .ColorIndex = 3
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+    
+'Select Task Number
+ActiveSheet.Range("E2").Select
+
+End Sub
