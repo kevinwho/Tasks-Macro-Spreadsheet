@@ -1,0 +1,9 @@
+Sub AutoWidth()
+'
+' AutoWidth Macro
+' Auto audjust the width of all columns
+'
+' Keyboard Shortcut: Option+Cmd+t
+'
+    ActiveSheet.Cells.EntireColumn.AutoFit
+End Sub
